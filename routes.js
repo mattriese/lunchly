@@ -40,17 +40,21 @@ router.post("/add/", async function (req, res, next) {
  * redirect to that customer detail page.
  *
  * search for a customer */
- router.get("/search/", async function (req, res, next) {
+router.get("/search/", async function (req, res, next) {
   console.log("req.query = ", req.query);
+
   const { name } = req.query;
   console.log("name= ", name);
   const firstName = name.split(" ")[0];
   const lastName = name.split(" ")[1];
-  console.log("firstname, lastname = ", firstName, lastName);
 
-  const customerId = await Customer.search(firstName, lastName)
-
-  return res.redirect(`/${customerId}/`);
+  let customers;
+  if (!lastName) {
+    customers = await Customer.searchOneName(name);
+  } else {
+    customers = await Customer.searchFullName(firstName, lastName)
+  }
+  return res.render("customer_list.html", { customers });
 });
 
 

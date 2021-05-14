@@ -5,6 +5,7 @@ const { query } = require("../db");
 
 const db = require("../db");
 const Reservation = require("./reservation");
+const { NotFoundError } = require("../expressError")
 
 /** Customer of the restaurant. */
 
@@ -91,22 +92,49 @@ class Customer {
       );
     }
   }
-
+  /* Displays fullname of customer */
   fullName() {
     return this.firstName + " " + this.lastName;
   }
 
   /** search function to find customer id with first and last name */
-  static async search(firstName, lastName) {
+  static async searchFullName(firstName, lastName) {
+    console.log("fname, lname", firstName, lastName)
     const customer = await db.query(
-      `SELECT id
+      `SELECT id,
+        first_name AS "firstName",
+        last_name  AS "lastName",
+        phone,
+        notes
        FROM customers
-       WHERE first_name = $1 AND
-             last_name = $2`,
-      [firstName, lastName],
+       WHERE first_name ILIKE $1 OR
+             last_name ILIKE $2`,
+      [`%${firstName}%`, `%${lastName}%`],
     );
+
     console.log("customerId after query = ", customer);
-    return customer.rows[0].id;
+    if (customer.rows.length === 0) throw new NotFoundError("customer name not found")
+    return customer.rows.map(c => new Customer(c));
+  }
+
+
+  /*Searches for a customer when only one name is given */
+  static async searchOneName(name) {
+
+    const customer = await db.query(
+      `SELECT id,
+      first_name AS "firstName",
+      last_name  AS "lastName",
+      phone,
+      notes
+       FROM customers
+       WHERE first_name ILIKE $1 OR
+             last_name ILIKE $1`,
+      [`%${name}%`],
+    );
+
+    if (customer.rows.length === 0) throw new NotFoundError("customer name not found");
+    return customer.rows.map(c => new Customer(c));
   }
 
 }
