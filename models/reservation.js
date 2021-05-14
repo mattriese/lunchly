@@ -39,6 +39,37 @@ class Reservation {
 
     return results.rows.map(row => new Reservation(row));
   }
+
+
+/** save this reservation */
+
+	async save() {
+		if (this.id === undefined) {
+		const result = await db.query(
+			`INSERT INTO reservations (customer_id, numGuests, startAt, notes)
+				VALUES ($1, $2, $3, $4)
+				RETURNING id`,
+			[this.customer_id, this.numGuests, this.startAt, this.notes],
+		);
+		this.id = result.rows[0].id;
+		} else {
+		await db.query(
+			`UPDATE reservations
+				SET customer_id=$1,
+					numGuests=$2,
+					startAt=$3,
+					notes=$4
+				WHERE id = $5`, [
+			this.customer_id,
+			this.numGuests,
+			this.startAt,
+			this.notes,
+			this.id,
+		],
+		);
+		}
+	}
+
 }
 
 
