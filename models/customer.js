@@ -1,5 +1,6 @@
 "use strict";
 
+const { query } = require("../db");
 /** Customer for Lunchly */
 
 const db = require("../db");
@@ -94,6 +95,20 @@ class Customer {
   fullName() {
     return this.firstName + " " + this.lastName;
   }
+
+  /** search function to find customer id with first and last name */
+  static async search(firstName, lastName) {
+    const customer = await db.query(
+      `SELECT id
+       FROM customers
+       WHERE first_name = $1 AND
+             last_name = $2`,
+      [firstName, lastName],
+    );
+    console.log("customerId after query = ", customer);
+    return customer.rows[0].id;
+  }
+
 }
 
 module.exports = Customer;

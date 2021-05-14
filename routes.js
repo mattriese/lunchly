@@ -32,6 +32,28 @@ router.post("/add/", async function (req, res, next) {
   return res.redirect(`/${customer.id}/`);
 });
 
+
+/** Route that makes a get request from the search bar to /?query_string GET
+ * pull out the name from query string assuming first word is first name and 2nd word
+ * is last name, ignoring anything else
+ * and make sql query on that name, returning customer_id
+ * redirect to that customer detail page.
+ *
+ * search for a customer */
+ router.get("/search/", async function (req, res, next) {
+  console.log("req.query = ", req.query);
+  const { name } = req.query;
+  console.log("name= ", name);
+  const firstName = name.split(" ")[0];
+  const lastName = name.split(" ")[1];
+  console.log("firstname, lastname = ", firstName, lastName);
+
+  const customerId = await Customer.search(firstName, lastName)
+
+  return res.redirect(`/${customerId}/`);
+});
+
+
 /** Show a customer, given their ID. */
 
 router.get("/:id/", async function (req, res, next) {
@@ -67,19 +89,23 @@ router.post("/:id/edit/", async function (req, res, next) {
 
 router.post("/:id/add-reservation/", async function (req, res, next) {
   const customerId = req.params.id;
+  console.log("req.params.id = ", req.params.id)
   const startAt = new Date(req.body.startAt);
   const numGuests = req.body.numGuests;
   const notes = req.body.notes;
 
   const reservation = new Reservation({
     customerId,
-    startAt,
     numGuests,
+    startAt,
     notes,
   });
+  console.log("reservation= ", reservation);
   await reservation.save();
 
   return res.redirect(`/${customerId}/`);
 });
+
+
 
 module.exports = router;
