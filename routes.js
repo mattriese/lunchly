@@ -49,12 +49,17 @@ router.get("/search/", async function (req, res, next) {
   const lastName = name.split(" ")[1];
 
   let customers;
-  if (!lastName) {
-    customers = await Customer.searchOneName(name);
-  } else {
-    customers = await Customer.searchFullName(firstName, lastName)
+  try {
+    if (!lastName) {
+      customers = await Customer.searchOneName(name);
+    } else {
+      customers = await Customer.searchFullName(firstName, lastName)
+    }
+    return res.render("customer_list.html", { customers });
   }
-  return res.render("customer_list.html", { customers });
+  catch(err) {
+    return res.render("error.html", {err});
+  }
 });
 
 

@@ -70,6 +70,9 @@ class Reservation {
 		}
 	}
 
+	/** get customer_id from reservations, group by customer_id */
+	// select customer_id, count(customer_id)
+	// from reservations group by customer_id order by count desc limit 10;
 }
 
 
