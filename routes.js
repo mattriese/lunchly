@@ -45,8 +45,9 @@ router.get("/search/", async function (req, res, next) {
 
   const { name } = req.query;
   console.log("name= ", name);
-  const firstName = name.split(" ")[0];
-  const lastName = name.split(" ")[1];
+  const [firstName, lastName] = name.split(" ");
+  //const firstName = name.split(" ")[0];
+  //const lastName = name.split(" ")[1];
 
   let customers;
   try {

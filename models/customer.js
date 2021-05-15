@@ -97,7 +97,7 @@ class Customer {
     return this.firstName + " " + this.lastName;
   }
 
-  /** search function to find customer id with first and last name */
+  /** search function to find customer id with first and last name ... return an array of customer objects*/
   static async searchFullName(firstName, lastName) {
     console.log("fname, lname", firstName, lastName)
     const customer = await db.query(
@@ -114,6 +114,7 @@ class Customer {
 
     console.log("customerId after query = ", customer);
     if (customer.rows.length === 0) throw new NotFoundError("customer name not found")
+    // no search records found vs n... just return from the backend that we found zero.
     return customer.rows.map(c => new Customer(c));
   }
 

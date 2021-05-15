@@ -70,9 +70,14 @@ class Reservation {
 		}
 	}
 
-	/** get customer_id from reservations, group by customer_id */
-	// select customer_id, count(customer_id)
-	// from reservations group by customer_id order by count desc limit 10;
+	/** get customer_id from reservations, group by customer_id
+
+	QUERY:
+	select customer_id, count(customer_id)
+	from reservations group by customer_id order by count desc limit 10;
+
+	mabye call get method 10 times
+	*/
 }
 
 
